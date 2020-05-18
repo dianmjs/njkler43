@@ -1,46 +1,54 @@
-import React, { useState, useEffect } from "react";
+import React, { Component } from "react";
 import posts from "./posts";
 
-// Modifica el componente App para implmentar la funcionalidad requerida
+// Modifica el componente App para implementar la funcionalidad requerida
 
-function App() {
-  const [searchList, setSearchlist] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
+class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      everyPosts: posts,
+      posts: posts,
+    };
+  }
 
-  const handleChange = (event) => {
-    setSearchlist(event.target.value);
-  };
+  handleChange(e) {
+    let actualList = [];
+    let newList = [];
 
-  useEffect(() => {
-    const results = posts.title.filter((postes) =>
-      postes.toLowerCase().includes(searchList)
+    actualList = this.state.everyPosts;
+    newList = actualList.filter((item, index) =>
+      item.title.toLowerCase().includes(e.target.value.toLowerCase())
     );
-    setSearchResults(results);
-  }, [searchList]);
 
-  return (
-    <div>
-      <div className="filter">
-        <input
-          type="text"
-          placeholder="Ingresa el término de búsqueda"
-          value={searchList}
-          onChange={handleChange}
-        />
-      </div>
-      <ul>
-        <li>
-          {searchResults.map((item) => (
-            <li>{item}</li>
+    this.setState({
+      posts: newList,
+    });
+  }
+
+  render() {
+    return (
+      <div>
+        <div className="filter">
+          <input
+            type="text"
+            onChange={this.handleChange.bind(this)}
+            placeholder="Ingresa el término de búsqueda"
+          />
+        </div>
+        <ul>
+          {this.state.posts.map((post, index) => (
+            <li key={index}>
+              <a href={post.url}>
+                <img src={post.image} />
+              </a>
+              <p>{post.title}</p>
+            </li>
           ))}
-          <a href={posts[0].url}>
-            <img src={posts[0].image} />
-          </a>
-          <p>{posts[0].title}</p>
-        </li>
-      </ul>
-    </div>
-  );
+        </ul>
+      </div>
+    );
+  }
 }
 
 export default App;
